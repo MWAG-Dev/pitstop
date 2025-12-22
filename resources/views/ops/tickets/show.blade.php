@@ -4,106 +4,153 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Ticket #{{ $ticket->id }}</title>
-    <style>
-        body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 24px; max-width: 900px; margin: 0 auto; }
-        .row { display:flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
-        .pill { display:inline-block; padding: 4px 10px; border-radius: 999px; border: 1px solid #ddd; font-size: 12px; }
-        .muted { color:#666; font-size: 13px; }
-        .card { border: 1px solid #eee; border-radius: 14px; padding: 14px; margin-top: 14px; }
-        textarea { width: 100%; }
-        select, button { padding: 10px; border-radius: 10px; border: 1px solid #ddd; }
-        button { cursor: pointer; }
-        a { color: inherit; }
-        .success { background: #e8fff0; border: 1px solid #b7f0cc; padding: 12px; border-radius: 10px; margin-top: 14px; }
-    </style>
+
+    @vite([
+        'resources/css/app.css',
+        'resources/css/ticket.css',
+        'resources/js/app.js'
+    ])
 </head>
 <body>
-    <div class="row">
-        <div>
-            <h1>Ticket #{{ $ticket->id }}</h1>
-            <div class="muted">
-                Submitted {{ $ticket->created_at->format('Y-m-d g:i A') }} by {{ $ticket->requester_email }}
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand">
+                <img
+                    src="{{ asset('images/pitstop-logo.png') }}"
+                    alt="PitStop"
+                    class="brand-logo"
+                />
+                <div class="brand-title">
+                    <strong>Ticket #{{ $ticket->id }}</strong>
+                    <span>Ops Ticket Detail</span>
+                </div>
+            </div>
+
+            <div class="topbar-actions">
+                <a class="btn" href="{{ route('ops.tickets.index') }}">← Back to queue</a>
+                <a class="btn" href="{{ url('/') }}">Dashboard</a>
+                <a class="btn btn-primary" href="{{ route('tickets.create') }}">+ Submit Ticket</a>
             </div>
         </div>
-        <div>
-            <a href="{{ route('ops.tickets.index') }}">← Back to queue</a>
-        </div>
-    </div>
+    </header>
 
-    @if(session('success'))
-        <div class="success">{{ session('success') }}</div>
-    @endif
-
-    <div class="card">
-        <div class="row">
+    <main class="shell page">
+        <div class="ticket-head">
             <div>
-                <div><strong>Subject:</strong> {{ $ticket->subject }}</div>
-                <div class="muted" style="margin-top:6px;">
-                    <span class="pill">{{ $ticket->status }}</span>
-                    <span class="pill">{{ $ticket->priority }}</span>
-                    <span class="pill">{{ $ticket->category }}</span>
+                <h1 class="ticket-title">Ticket #{{ $ticket->id }}</h1>
+                <div class="ticket-sub">
+                    Submitted {{ $ticket->created_at->format('Y-m-d g:i A') }} by {{ $ticket->requester_email }}
+                </div>
+
+                <div class="ticket-meta" aria-label="Ticket tags">
+                    <span class="ticket-pill">{{ $ticket->status }}</span>
+                    <span class="ticket-pill">{{ $ticket->priority }}</span>
+                    <span class="ticket-pill">{{ $ticket->category }}</span>
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('ops.tickets.status', $ticket) }}">
-                @csrf
-                <label class="muted" for="status">Update Status</label><br>
-                <select id="status" name="status" required>
-                    @foreach(['Open','In Progress','Waiting','Closed'] as $s)
-                        <option value="{{ $s }}" @selected($ticket->status === $s)>{{ $s }}</option>
-                    @endforeach
-                </select>
-                <button type="submit">Save</button>
-            </form>
+            <div class="pill">Tip: update status on the right.</div>
         </div>
 
-        <hr style="border:none;border-top:1px solid #eee;margin:14px 0;">
+        @if(session('success'))
+            <div class="alert-success">{{ session('success') }}</div>
+        @endif
 
-        <div>
-            <strong>Description</strong>
-            <div style="margin-top:8px; white-space: pre-wrap;">{{ $ticket->description }}</div>
-        </div>
+        <div class="ticket-grid" style="margin-top: 14px;">
+            <section class="card" aria-label="Ticket details">
+                <div style="padding: 16px 18px;">
+                    <h2 class="ticket-section-title">Subject</h2>
+                    <div class="ticket-body">{{ $ticket->subject }}</div>
 
-<div class="card">
-    <h3 style="margin-top:0;">Replies</h3>
+                    <div style="height: 14px;"></div>
 
-    @forelse($ticket->replies as $reply)
-        <div style="padding:12px 0; border-top:1px solid #eee;">
-            <div class="muted" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-                <div>
-                    <span class="pill">{{ strtoupper($reply->author_role) }}</span>
-                    @if($reply->author_email)
-                        <span class="muted">{{ $reply->author_email }}</span>
-                    @endif
+                    <h2 class="ticket-section-title">Description</h2>
+                    <div class="ticket-body">{{ $ticket->description }}</div>
                 </div>
-                <div class="muted">{{ $reply->created_at->format('Y-m-d g:i A') }}</div>
-            </div>
+            </section>
 
-            <div style="margin-top:8px; white-space:pre-wrap;">{{ $reply->message }}</div>
+            @if(auth()->check() && auth()->user()->role === 'admin')
+                <section class="card" aria-label="Update status">
+                    <div style="padding: 16px 18px;">
+                        <h2 class="ticket-section-title">Update Status</h2>
+
+                        <form method="POST" action="{{ route('ops.tickets.status', $ticket) }}">
+                            @csrf
+
+                            <div class="field">
+                                <label class="label" for="status">Status</label>
+                                <select id="status" name="status" class="select" required>
+                                    @foreach(['Open','In Progress','Waiting','Closed'] as $s)
+                                        <option value="{{ $s }}" @selected($ticket->status === $s)>{{ $s }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            @else
+                <section class="card" aria-label="Status permissions">
+                    <div style="padding: 16px 18px;">
+                        <h2 class="ticket-section-title">Update Status</h2>
+                        <div class="ticket-sub">Only admins can update ticket status.</div>
+                    </div>
+                </section>
+            @endif
         </div>
-    @empty
-        <div class="muted">No replies yet.</div>
-    @endforelse
-</div>
 
-<div class="card">
-    <h3 style="margin-top:0;">Post a Reply</h3>
+        <section class="card" aria-label="Replies" style="margin-top: 14px;">
+            <div style="padding: 16px 18px;">
+                <h2 class="ticket-section-title">Replies</h2>
 
-    <form method="POST" action="{{ route('ops.tickets.reply', $ticket) }}">
-        @csrf
+                <div class="replies">
+                    @forelse($ticket->replies as $reply)
+                        <div class="reply">
+                            <div class="reply-head">
+                                <div class="reply-author">
+                                    <span class="ticket-pill">{{ strtolower($reply->author_role) }}</span>
+                                    @if($reply->author_email)
+                                        <span>{{ $reply->author_email }}</span>
+                                    @endif
+                                </div>
+                                <div>{{ $reply->created_at->format('Y-m-d g:i A') }}</div>
+                            </div>
 
-        <label class="muted">Your Email (optional)</label>
-        <input type="email" name="author_email"
-               style="width:100%; padding:10px; margin-top:6px; border:1px solid #ddd; border-radius:10px;">
+                            <div class="reply-body">{{ $reply->message }}</div>
+                        </div>
+                    @empty
+                        <div class="ticket-sub" style="margin-top: 10px;">No replies yet.</div>
+                    @endforelse
+                </div>
+            </div>
+        </section>
 
-        <label class="muted" style="display:block; margin-top:12px;">Message</label>
-        <textarea name="message" rows="5" required
-                  style="width:100%; padding:10px; margin-top:6px; border:1px solid #ddd; border-radius:10px;"></textarea>
+        <section class="card" aria-label="Post a reply" style="margin-top: 14px;">
+            <div style="padding: 16px 18px;">
+                <h2 class="ticket-section-title">Post a Reply</h2>
 
-        <button type="submit" style="margin-top:12px;">Send Reply</button>
-    </form>
-</div>
+                <form method="POST" action="{{ route('ops.tickets.reply', $ticket) }}">
+                    @csrf
 
-    </div>
+                    <div class="field">
+                        <label class="label" for="author_email">Your Email (optional)</label>
+                        <input id="author_email" class="input" type="email" name="author_email" autocomplete="email">
+                    </div>
+
+                    <div class="field">
+                        <label class="label" for="message">Message</label>
+                        <textarea id="message" class="textarea" name="message" rows="5" required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Send Reply</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
 </body>
 </html>

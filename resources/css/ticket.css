@@ -1,0 +1,174 @@
+/* resources/css/ticket.css */
+
+/* Ticket detail (Ops) styles layered on top of app.css */
+
+.ticket-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ticket-title {
+  margin: 0;
+  font-size: 1.45rem;
+  letter-spacing: -0.02em;
+}
+
+.ticket-sub {
+  margin-top: 6px;
+  color: rgba(255,255,255,0.70);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.ticket-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.ticket-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.08);
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.88);
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+.ticket-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.ticket-section-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+}
+
+.ticket-body {
+  margin-top: 10px;
+  white-space: pre-wrap;
+  color: rgba(255,255,255,0.88);
+  line-height: 1.55;
+}
+
+/* Forms */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.label {
+  color: rgba(255,255,255,0.70);
+  font-size: 0.82rem;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(7, 11, 20, 0.30);
+  color: rgba(255,255,255,0.92);
+  outline: none;
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: rgba(99, 179, 237, 0.55);
+  box-shadow: 0 0 0 4px rgba(99, 179, 237, 0.18);
+}
+
+.form-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Replies */
+.replies {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 8px;
+}
+
+.reply {
+  padding: 14px 0;
+  border-top: 1px solid rgba(255,255,255,0.10);
+}
+
+.reply:first-child {
+  border-top: none;
+  padding-top: 6px;
+}
+
+.reply-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: rgba(255,255,255,0.62);
+  font-size: 0.82rem;
+}
+
+.reply-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.reply-body {
+  margin-top: 8px;
+  white-space: pre-wrap;
+  color: rgba(255,255,255,0.88);
+  line-height: 1.55;
+}
+
+/* Alerts */
+.alert-success {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  background: rgba(52, 211, 153, 0.10);
+  color: rgba(255,255,255,0.92);
+}
+
+@media (max-width: 900px) {
+  .ticket-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.brand-logo {
+  height: 32px;
+  width: auto;
+  display: block;
+  max-width: 140px;
+  object-fit: contain;
+}
