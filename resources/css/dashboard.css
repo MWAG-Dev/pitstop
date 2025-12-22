@@ -1,0 +1,141 @@
+/* resources/css/dashboard.css */
+
+/* Dashboard-specific layout helpers that sit on top of the global PitStop theme in app.css */
+
+.dash-logo {
+  height: 40px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 10px 22px rgba(0,0,0,0.35));
+}
+
+.dash-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.dash-toprow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.dash-h2 {
+  font-size: 1.05rem;
+  font-weight: 750;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.dash-meta {
+  margin-top: 6px;
+  font-size: xx-small;
+  color: rgba(255,255,255,0.70);
+  line-height: 1.45;
+}
+
+.dash-stats {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dash-opsgrid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.dash-stat {
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(7, 11, 20, 0.30);
+}
+
+.dash-stat-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.60);
+}
+
+.dash-stat-value {
+  font-size: 2rem;
+  font-weight: 850;
+  line-height: 1.1;
+  margin-top: 6px;
+}
+
+.dash-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Recent tickets list */
+.dash-ticket-list {
+  margin-top: 14px;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.dash-ticket-item {
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+.dash-ticket-item:last-child {
+  border-bottom: none;
+}
+
+.dash-ticket-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  color: rgba(255,255,255,0.92);
+  text-decoration: none;
+  padding: 10px 6px;
+  border-radius: 12px;
+  transition: background 120ms ease, transform 120ms ease;
+}
+
+.dash-ticket-link:hover {
+  background: rgba(255,255,255,0.06);
+  transform: translateY(-1px);
+}
+
+.dash-ticket-title {
+  flex: 1;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-ticket-status {
+  font-size: 0.78rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.86);
+  text-transform: capitalize;
+}
+
+.dash-ticket-date {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.62);
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .dash-stats { grid-template-columns: 1fr; }
+  .dash-opsgrid { grid-template-columns: 1fr; }
+  .topbar-actions { justify-content: flex-start; }
+}
