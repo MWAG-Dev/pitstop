@@ -15,7 +15,7 @@ class NewTicketSubmitted extends Mailable
 
     public function build()
     {
-        return $this->subject("New Ops Ticket #{$this->ticket->id}: {$this->ticket->subject}")
+        return $this->subject("New Ops Request #{$this->ticket->id}: {$this->ticket->subject}")
             ->view('emails.new_ticket_submitted');
     }
 }

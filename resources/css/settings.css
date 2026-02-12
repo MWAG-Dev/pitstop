@@ -1,0 +1,119 @@
+/* Settings (profile) styles layered on top of app.css */
+
+.page {
+    padding-top: 18px;
+}
+
+.header-row {
+    margin-top: 10px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.55rem;
+    letter-spacing: -0.02em;
+}
+
+.page-sub {
+    margin-top: 6px;
+    color: var(--muted);
+    max-width: 70ch;
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+.settings-stack {
+    display: grid;
+    gap: 14px;
+}
+
+.card-inner {
+    padding: 18px;
+}
+
+/* Tailwind utility overrides (scoped) */
+.settings-shell .text-gray-900,
+.settings-shell .text-gray-800,
+.settings-shell .text-gray-700 {
+    color: rgba(255,255,255,0.92) !important;
+}
+
+.settings-shell .text-gray-600,
+.settings-shell .text-gray-500 {
+    color: rgba(255,255,255,0.70) !important;
+}
+
+.settings-shell .bg-white,
+.settings-shell .bg-gray-50 {
+    background: rgba(255,255,255,0.06) !important;
+}
+
+.settings-shell .border-gray-200,
+.settings-shell .border-gray-300 {
+    border-color: rgba(255,255,255,0.14) !important;
+}
+
+.settings-shell .shadow,
+.settings-shell .shadow-sm,
+.settings-shell .shadow-lg,
+.settings-shell .shadow-xl {
+    box-shadow: var(--shadow) !important;
+}
+
+.settings-shell input,
+.settings-shell select,
+.settings-shell textarea {
+    background: rgba(7, 11, 20, 0.30) !important;
+    color: rgba(255,255,255,0.92) !important;
+    border-color: rgba(255,255,255,0.14) !important;
+    border-radius: 12px !important;
+}
+
+.settings-shell input:focus,
+.settings-shell select:focus,
+.settings-shell textarea:focus {
+    border-color: rgba(99, 179, 237, 0.55) !important;
+    box-shadow: 0 0 0 4px rgba(99, 179, 237, 0.18) !important;
+}
+
+.settings-shell .bg-gray-800 {
+    background: linear-gradient(135deg, rgba(99,179,237,.95), rgba(99,179,237,.72)) !important;
+    border-color: rgba(99,179,237,.55) !important;
+}
+
+.settings-shell .bg-gray-800:hover {
+    background: linear-gradient(135deg, rgba(99,179,237,1), rgba(99,179,237,.78)) !important;
+}
+
+.settings-shell .bg-white.text-gray-700 {
+    background: rgba(255,255,255,0.08) !important;
+    color: rgba(255,255,255,0.92) !important;
+    border-color: rgba(255,255,255,0.14) !important;
+}
+
+.settings-shell .bg-gray-500 {
+    background: rgba(0,0,0,0.6) !important;
+}
+
+.settings-shell .ring-offset-2 {
+    --tw-ring-offset-width: 0px !important;
+}
+
+/* Keep dropdown menu on white background */
+.settings-shell .topbar .bg-white {
+    background: #ffffff !important;
+}
+
+.settings-shell .topbar .bg-gray-100 {
+    background: #f3f4f6 !important;
+}
+
+.settings-shell .topbar .text-gray-700 {
+    color: #374151 !important;
+}

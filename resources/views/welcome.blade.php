@@ -75,9 +75,9 @@
                                 </div>
 
                                 <p class="guest-footnote">
-                                    <b>Use your company email.</b> If you can’t access your account,
+                                    <b>Use your company email to create an account.</b> If you can’t access your account,
                                     <a href="mailto:dev@mwmotor.com" class="email-link">contact</a>
-                                    the Operations team.
+                                    the Dev Ops team.
                                 </p>
                             </div>
                         </div>

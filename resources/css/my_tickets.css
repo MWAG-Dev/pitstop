@@ -41,21 +41,79 @@
   padding: 16px 18px;
 }
 
+/* Make the clickable card feel interactive and uniform */
+.ticket-card {
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.ticket-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+}
+
+.ticket-card:focus-within {
+  outline: 2px solid rgba(255,255,255,0.30);
+  outline-offset: 2px;
+}
+
 .ticket-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "main time"
+    "badges time";
+  gap: 10px 14px;
+  align-items: start;
+}
+
+/* Ensure the left column content participates in the grid */
+.ticket-top > div:first-child {
+  grid-area: main;
+  min-width: 0;
+}
+
+.badges {
+  grid-area: badges;
+}
+
+.ticket-time {
+  grid-area: time;
+  justify-self: end;
+  align-self: start;
 }
 
 .ticket-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
   font-weight: 800;
   letter-spacing: -0.01em;
+
+  font-size: 0.80rem;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.18);
+  color: rgba(255,255,255,0.92);
+}
+
+.ticket-id::before {
+  content: "Ticket";
+  font-weight: 650;
+  letter-spacing: 0.2px;
+  opacity: 0.82;
 }
 
 .ticket-subject {
+  display: inline-block;
+  margin-left: 6px;
   font-weight: 650;
+  font-size: 1.02rem;
+  line-height: 1.25;
+  color: rgba(255,255,255,0.92);
+  text-decoration: none !important;
 }
 
 .ticket-meta {
@@ -67,8 +125,9 @@
 
 .ticket-time {
   color: rgba(255,255,255,0.62);
-  font-size: 0.86rem;
+  font-size: 0.82rem;
   white-space: nowrap;
+  padding-top: 2px;
 }
 
 .badges {
@@ -94,6 +153,9 @@
 
 .ticket-desc {
   margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+
   white-space: pre-wrap;
   color: rgba(255,255,255,0.88);
   line-height: 1.5;
@@ -155,4 +217,84 @@
   display: block;
   max-width: 140px;
   object-fit: contain;
+}
+
+/* Remove duplicate inline metadata (category/priority/status) since badges already display them */
+.ticket-meta {
+  display: none;
+}
+
+/* ------------------------------------------------------------
+   My Tickets – improved tab / button styling
+   ------------------------------------------------------------ */
+
+.ticket-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 6px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+.ticket-tab {
+  position: relative;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+
+  color: rgba(255,255,255,0.70);
+  background: transparent;
+
+  transition:
+    color 120ms ease,
+    background 120ms ease,
+    box-shadow 120ms ease,
+    transform 120ms ease;
+}
+
+.ticket-tab:hover {
+  color: rgba(255,255,255,0.92);
+  background: rgba(255,255,255,0.08);
+}
+
+.ticket-tab:active {
+  transform: translateY(1px);
+}
+
+.ticket-tab:focus-visible {
+  outline: 2px solid rgba(255,255,255,0.35);
+  outline-offset: 2px;
+}
+
+/* Active tab = selected button */
+.ticket-tab.is-active {
+  color: rgba(255,255,255,0.95);
+  background: rgba(255,255,255,0.14);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.18) inset,
+    0 8px 22px rgba(0,0,0,0.35);
+}
+
+/* Subtle indicator bar */
+.ticket-tab.is-active::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.55);
 }

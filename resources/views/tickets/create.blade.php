@@ -4,7 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </title>
-    @vite(['resources/css/create.css'])
+    @vite([
+        'resources/css/app.css',
+        'resources/css/create.css',
+        'resources/js/app.js'
+    ])
 </head>
 <body>
     <header class="topbar">
@@ -17,11 +21,11 @@
                 />
                 <div class="brand-title">
                     <strong>PitStop</strong>
-                    <span>Operations Ticketing</span>
+                    <span>Operations Requests</span>
                 </div>
             </div>
 
-            <div class="topbar-actions">
+            <div class="topbar-actions" style="display:flex; gap:10px; align-items:center;">
                 <a class="btn" href="{{ url('/') }}" aria-label="Go to Dashboard">
                     ← Dashboard
                 </a>
@@ -29,6 +33,41 @@
                 <span class="pill" title="Signed in user">
                     {{ auth()->user()->email }}
                 </span>
+
+                <x-dropdown align="right" width="56">
+                    <x-slot name="trigger">
+                        <button type="button" class="btn" style="display:flex; gap:6px; align-items:center;">
+                            Menu
+                            <svg class="fill-current" style="height:16px;width:16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </x-slot>
+
+                    <x-slot name="content">
+                        <x-dropdown-link :href="route('my_tickets.index')">My Requests</x-dropdown-link>
+
+                        @if(auth()->user()->isOps())
+                            <x-dropdown-link :href="route('ops.tickets.index')">Ops Queue</x-dropdown-link>
+                        @endif
+
+                        @if(auth()->user()->isAdmin())
+                            <x-dropdown-link :href="route('admin.users.index')">User Management</x-dropdown-link>
+                        @endif
+
+                        <x-dropdown-link :href="route('profile.edit')">Settings</x-dropdown-link>
+
+                        <div class="border-t border-gray-100 my-1"></div>
+
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <x-dropdown-link :href="route('logout')"
+                                onclick="event.preventDefault(); this.closest('form').submit();">
+                                Log out
+                            </x-dropdown-link>
+                        </form>
+                    </x-slot>
+                </x-dropdown>
             </div>
         </div>
     </header>
@@ -60,7 +99,7 @@
             </div>
         @endif
 
-        <section class="card" aria-label="Ticket submission form">
+        <section class="card" aria-label="Request submission form">
             <form method="POST" action="{{ route('tickets.store') }}" enctype="multipart/form-data">
                 @csrf
 
@@ -127,7 +166,7 @@
                         Submitting as <strong style="color: rgba(255,255,255,0.90);">{{ auth()->user()->email }}</strong>
                     </div>
 
-                    <button class="btn btn-primary" type="submit">Submit Ticket</button>
+                    <button class="btn btn-primary" type="submit">Submit Request</button>
                 </div>
             </form>
         </section>

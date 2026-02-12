@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
 use App\Mail\NewTicketSubmitted;
 use App\Mail\TicketReplied;
+use App\Models\TicketView;
 
 class TicketController extends Controller
 {
@@ -109,7 +110,7 @@ class TicketController extends Controller
 
        $reply = $ticket->replies()->create([
             'author_role'  => 'ops',
-            'author_email' => $validated['author_email'] ?? null,
+            'author_email' => auth()->user()?->email,
             'message'      => $validated['message'],
         ]);
 
@@ -140,7 +141,7 @@ class TicketController extends Controller
             }
         }
 
-        Mail::to($ticket->requester_email)->send(new TicketReplied($ticket, $reply));
+        Mail::to($ticket->requester_email)->send(new TicketReplied($ticket, $reply, 'requester'));
 
        if ($ticket->status === 'Open') {
            $ticket->update(['status' => 'In Progress']);
@@ -151,13 +152,57 @@ class TicketController extends Controller
 
     public function opsIndex()
     {
-        $tickets = Ticket::orderByDesc('created_at')->paginate(20);
-        return view('ops.tickets.index', compact('tickets'));
+        $statusFilter = strtolower((string) request('status', ''));
+
+        $ticketsQuery = Ticket::query();
+
+        if ($statusFilter === 'closed') {
+            $ticketsQuery->whereIn('status', ['Closed', 'Resolved']);
+        } elseif ($statusFilter !== '') {
+            $ticketsQuery->where('status', ucfirst($statusFilter));
+        } else {
+            $ticketsQuery->whereNotIn('status', ['Closed', 'Resolved']);
+        }
+
+        $tickets = $ticketsQuery
+            ->with(['replies' => fn ($query) => $query->latest('created_at')->limit(1)])
+            ->orderByDesc('created_at')
+            ->paginate(20)
+            ->appends(request()->query());
+
+        $unreadTicketIds = [];
+        $user = auth()->user();
+        if ($user && $tickets->count() > 0) {
+            $views = TicketView::where('user_id', $user->id)
+                ->whereIn('ticket_id', $tickets->pluck('id'))
+                ->get()
+                ->keyBy('ticket_id');
+
+            $unreadTicketIds = $tickets->getCollection()->filter(function ($ticket) use ($views) {
+                $latestReply = $ticket->replies->first();
+                if (!$latestReply || $latestReply->author_role !== 'requester') {
+                    return false;
+                }
+
+                $lastViewed = $views->get($ticket->id)?->last_viewed_at;
+
+                return !$lastViewed || $latestReply->created_at->gt($lastViewed);
+            })->pluck('id')->all();
+        }
+
+        return view('ops.tickets.index', compact('tickets', 'unreadTicketIds'));
     }
 
     public function opsShow(Ticket $ticket)
     {
         $ticket->load('replies');
+        $user = auth()->user();
+        if ($user) {
+            TicketView::updateOrCreate(
+                ['user_id' => $user->id, 'ticket_id' => $ticket->id],
+                ['last_viewed_at' => now()]
+            );
+        }
         return view('ops.tickets.show', compact('ticket'));
     }
 
@@ -172,6 +217,19 @@ class TicketController extends Controller
         ]);
 
         return back()->with('success', 'Status updated.');
+    }
+
+    public function opsDestroy(Ticket $ticket)
+    {
+        $user = auth()->user();
+        abort_if(!$user || !$user->isAdmin(), 403);
+
+        $ticketId = $ticket->id;
+        $ticket->delete();
+
+        return redirect()
+            ->route('ops.tickets.index')
+            ->with('success', "Ticket #{$ticketId} deleted.");
     }
 
 }

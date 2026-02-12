@@ -1,6 +1,6 @@
-<h2>New Ops Ticket Submitted</h2>
+<h2>New Ops Request Submitted</h2>
 
-<p><strong>Ticket:</strong> #{{ $ticket->id }}</p>
+<p><strong>Request:</strong> #{{ $ticket->id }}</p>
 <p><strong>From:</strong> {{ $ticket->requester_email }}</p>
 <p><strong>Category:</strong> {{ $ticket->category }}</p>
 <p><strong>Priority:</strong> {{ $ticket->priority }}</p>
@@ -12,5 +12,5 @@
 <div style="white-space: pre-wrap;">{{ $ticket->description }}</div>
 
 <hr>
-<p>View:</p>
+<p>View request:</p>
 <p><a href="{{ url('/ops/tickets/' . $ticket->id) }}">{{ url('/ops/tickets/' . $ticket->id) }}</a></p>
