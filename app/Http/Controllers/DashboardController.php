@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\TicketView;
 
 class DashboardController extends Controller
 {
@@ -22,9 +23,30 @@ class DashboardController extends Controller
 
         // Fetch recent tickets using requester_email (consistent with counts)
         $myTickets = Ticket::where('requester_email', $user->email)
+            ->whereNotIn('status', ['Closed', 'Resolved'])
+            ->with(['replies' => fn ($query) => $query->latest('created_at')->limit(1)])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
+
+        $unreadTicketIds = [];
+        if ($myTickets->isNotEmpty()) {
+            $views = TicketView::where('user_id', $user->id)
+                ->whereIn('ticket_id', $myTickets->pluck('id'))
+                ->get()
+                ->keyBy('ticket_id');
+
+            $unreadTicketIds = $myTickets->filter(function ($ticket) use ($views) {
+                $latestReply = $ticket->replies->first();
+                if (!$latestReply || $latestReply->author_role !== 'ops') {
+                    return false;
+                }
+
+                $lastViewed = $views->get($ticket->id)?->last_viewed_at;
+
+                return !$lastViewed || $latestReply->created_at->gt($lastViewed);
+            })->pluck('id')->all();
+        }
 
         // Calculate counts
         $myTicketsCount = Ticket::where('requester_email', $user->email)->count();
@@ -50,6 +72,7 @@ class DashboardController extends Controller
             'myOpenCount'    => $myOpenCount,
             'opsSummary'     => $opsSummary,
             'myTickets'      => $myTickets,
+            'unreadTicketIds' => $unreadTicketIds,
         ]);
     }
 }

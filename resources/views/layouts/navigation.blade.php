@@ -18,12 +18,16 @@
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
+            <!-- New Request + Menu Dropdown -->
+            <div class="hidden sm:flex sm:items-center sm:ms-6 space-x-4">
+                <a href="{{ route('tickets.create') }}" class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
+                    + New Request
+                </a>
+
+                <x-dropdown align="right" width="56">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-600 bg-white hover:text-gray-800 focus:outline-none transition ease-in-out duration-150">
+                            <div>Menu</div>
 
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -34,11 +38,28 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                        <x-dropdown-link :href="route('my_tickets.index')">
+                            {{ __('My Requests') }}
                         </x-dropdown-link>
 
-                        <!-- Authentication -->
+                        @if(Auth::user()->isOps())
+                            <x-dropdown-link :href="route('ops.tickets.index')">
+                                {{ __('Ops Queue') }}
+                            </x-dropdown-link>
+                        @endif
+
+                        @if(Auth::user()->isAdmin())
+                            <x-dropdown-link :href="route('admin.users.index')">
+                                {{ __('User Management') }}
+                            </x-dropdown-link>
+                        @endif
+
+                        <x-dropdown-link :href="route('profile.edit')">
+                            {{ __('Settings') }}
+                        </x-dropdown-link>
+
+                        <div class="border-t border-gray-100 my-1"></div>
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 
@@ -70,6 +91,22 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('tickets.create')">
+                {{ __('New Request') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('my_tickets.index')">
+                {{ __('My Requests') }}
+            </x-responsive-nav-link>
+            @if(Auth::user()->isOps())
+                <x-responsive-nav-link :href="route('ops.tickets.index')">
+                    {{ __('Ops Queue') }}
+                </x-responsive-nav-link>
+            @endif
+            @if(Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.users.index')">
+                    {{ __('User Management') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -81,7 +118,7 @@
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                    {{ __('Settings') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->

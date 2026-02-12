@@ -12,11 +12,19 @@ class TicketReplied extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Ticket $ticket, public TicketReply $reply) {}
+    public function __construct(
+        public Ticket $ticket,
+        public TicketReply $reply,
+        public string $recipientType = 'requester'
+    ) {}
 
     public function build()
     {
-        return $this->subject("Update on your ticket #{$this->ticket->id}: {$this->ticket->subject}")
+        $subject = $this->recipientType === 'ops'
+            ? "New reply on request #{$this->ticket->id}: {$this->ticket->subject}"
+            : "Update on your request #{$this->ticket->id}: {$this->ticket->subject}";
+
+        return $this->subject($subject)
             ->view('emails.ticket_replied');
     }
 }
