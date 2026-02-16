@@ -1,10 +1,10 @@
 <?php
 
+use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AdminUserController;
 
 Route::get('/', function () {
     return auth()->check()
@@ -39,7 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/my-tickets', [\App\Http\Controllers\MyTicketsController::class, 'index'])->name('my_tickets.index');
     Route::get('/my-tickets/{ticket}', [\App\Http\Controllers\MyTicketsController::class, 'show'])
-    ->name('my_tickets.show');
+        ->name('my_tickets.show');
     Route::post('/my-tickets/{ticket}/reply', [\App\Http\Controllers\MyTicketsController::class, 'storeReply'])
         ->name('my_tickets.reply');
 

@@ -2,9 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class EnsureOps
 {
@@ -17,7 +15,7 @@ class EnsureOps
     {
         $user = auth()->user();
 
-        abort_if(!$user || !$user->isOps(), 403);
+        abort_if(! $user || ! $user->isOps(), 403);
 
         return $next($request);
     }

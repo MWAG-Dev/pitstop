@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ticket;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Arr;
 use App\Mail\NewTicketSubmitted;
 use App\Mail\TicketReplied;
+use App\Models\Ticket;
 use App\Models\TicketView;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class TicketController extends Controller
 {
@@ -22,11 +22,11 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'subject'     => ['required', 'string', 'max:150'],
-            'description'     => ['required', 'string', 'max:5000'],
-            'category'        => ['required', 'string', 'max:50'],
-            'priority'        => ['required', 'string', 'max:20'],
-            'attachments'   => ['nullable', 'array', 'max:10'],
+            'subject' => ['required', 'string', 'max:150'],
+            'description' => ['required', 'string', 'max:5000'],
+            'category' => ['required', 'string', 'max:50'],
+            'priority' => ['required', 'string', 'max:20'],
+            'attachments' => ['nullable', 'array', 'max:10'],
             'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,csv,txt'],
         ]);
 
@@ -45,7 +45,7 @@ class TicketController extends Controller
         $storedAttachments = [];
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                if (!$file || !$file->isValid()) {
+                if (! $file || ! $file->isValid()) {
                     continue;
                 }
 
@@ -59,7 +59,7 @@ class TicketController extends Controller
                 ];
             }
 
-            if (!empty($storedAttachments)) {
+            if (! empty($storedAttachments)) {
                 Log::info('Ticket attachments stored', [
                     'ticket_id' => $ticket->id,
                     'attachments' => $storedAttachments,
@@ -77,48 +77,50 @@ class TicketController extends Controller
 
     public function index()
     {
-       $tickets = \App\Models\Ticket::orderByDesc('created_at')->get();
-       return view('ops.tickets.index', compact('tickets'));
+        $tickets = \App\Models\Ticket::orderByDesc('created_at')->get();
+
+        return view('ops.tickets.index', compact('tickets'));
     }
 
     public function show(Ticket $ticket)
     {
-       $ticket->load('replies');
-       return view('ops.tickets.show', compact('ticket'));
+        $ticket->load('replies');
+
+        return view('ops.tickets.show', compact('ticket'));
     }
 
     public function updateStatus(Request $request, Ticket $ticket)
     {
-       $validated = $request->validate([
-           'status' => ['required', 'in:Open,In Progress,Waiting,Closed'],
-       ]);
+        $validated = $request->validate([
+            'status' => ['required', 'in:Open,In Progress,Waiting,Closed'],
+        ]);
 
-       $ticket->status = $validated['status'];
-       $ticket->save();
+        $ticket->status = $validated['status'];
+        $ticket->save();
 
-       return back()->with('success', 'Status updated.');
+        return back()->with('success', 'Status updated.');
     }
 
     public function storeReply(Request $request, Ticket $ticket)
     {
-       $validated = $request->validate([
-           'message' => ['required', 'string', 'max:5000'],
-           'author_email' => ['nullable', 'email', 'max:255'],
-           'attachments'   => ['nullable', 'array', 'max:10'],
-           'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,csv,txt'],
-       ]);
+        $validated = $request->validate([
+            'message' => ['required', 'string', 'max:5000'],
+            'author_email' => ['nullable', 'email', 'max:255'],
+            'attachments' => ['nullable', 'array', 'max:10'],
+            'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,csv,txt'],
+        ]);
 
-       $reply = $ticket->replies()->create([
-            'author_role'  => 'ops',
+        $reply = $ticket->replies()->create([
+            'author_role' => 'ops',
             'author_email' => auth()->user()?->email,
-            'message'      => $validated['message'],
+            'message' => $validated['message'],
         ]);
 
         // Store optional attachments for this reply
         $storedAttachments = [];
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                if (!$file || !$file->isValid()) {
+                if (! $file || ! $file->isValid()) {
                     continue;
                 }
 
@@ -132,7 +134,7 @@ class TicketController extends Controller
                 ];
             }
 
-            if (!empty($storedAttachments)) {
+            if (! empty($storedAttachments)) {
                 Log::info('Ticket reply attachments stored', [
                     'ticket_id' => $ticket->id,
                     'reply_id' => $reply->id,
@@ -143,11 +145,11 @@ class TicketController extends Controller
 
         Mail::to($ticket->requester_email)->send(new TicketReplied($ticket, $reply, 'requester'));
 
-       if ($ticket->status === 'Open') {
-           $ticket->update(['status' => 'In Progress']);
-       }
+        if ($ticket->status === 'Open') {
+            $ticket->update(['status' => 'In Progress']);
+        }
 
-       return back()->with('success', 'Reply posted.');
+        return back()->with('success', 'Reply posted.');
     }
 
     public function opsIndex()
@@ -180,13 +182,13 @@ class TicketController extends Controller
 
             $unreadTicketIds = $tickets->getCollection()->filter(function ($ticket) use ($views) {
                 $latestReply = $ticket->replies->first();
-                if (!$latestReply || $latestReply->author_role !== 'requester') {
+                if (! $latestReply || $latestReply->author_role !== 'requester') {
                     return false;
                 }
 
                 $lastViewed = $views->get($ticket->id)?->last_viewed_at;
 
-                return !$lastViewed || $latestReply->created_at->gt($lastViewed);
+                return ! $lastViewed || $latestReply->created_at->gt($lastViewed);
             })->pluck('id')->all();
         }
 
@@ -203,6 +205,7 @@ class TicketController extends Controller
                 ['last_viewed_at' => now()]
             );
         }
+
         return view('ops.tickets.show', compact('ticket'));
     }
 
@@ -222,7 +225,7 @@ class TicketController extends Controller
     public function opsDestroy(Ticket $ticket)
     {
         $user = auth()->user();
-        abort_if(!$user || !$user->isAdmin(), 403);
+        abort_if(! $user || ! $user->isAdmin(), 403);
 
         $ticketId = $ticket->id;
         $ticket->delete();
@@ -231,5 +234,4 @@ class TicketController extends Controller
             ->route('ops.tickets.index')
             ->with('success', "Ticket #{$ticketId} deleted.");
     }
-
 }

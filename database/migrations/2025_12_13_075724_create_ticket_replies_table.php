@@ -12,18 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ticket_replies', function (Blueprint $table) {
-    		$table->id();
+            $table->id();
 
-    		$table->foreignId('ticket_id')
-          		->constrained()
-          		->cascadeOnDelete();
+            $table->foreignId('ticket_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-    		$table->string('author_role')->default('ops');
-    		$table->string('author_email')->nullable();
-    		$table->text('message');
+            $table->string('author_role')->default('ops');
+            $table->string('author_email')->nullable();
+            $table->text('message');
 
-    		$table->timestamps();
-	});
+            $table->timestamps();
+        });
     }
 
     /**

@@ -2,9 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class EnsureAdmin
 {
@@ -17,7 +15,7 @@ class EnsureAdmin
     {
         $user = auth()->user();
 
-        abort_if(!$user || !$user->isAdmin(), 403);
+        abort_if(! $user || ! $user->isAdmin(), 403);
 
         return $next($request);
     }

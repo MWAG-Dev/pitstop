@@ -12,7 +12,7 @@ class DashboardController extends Controller
         $user = auth()->user();
 
         // Guest view: no counts
-        if (!$user) {
+        if (! $user) {
             return view('welcome', [
                 'user' => null,
                 'myTicketsCount' => null,
@@ -38,13 +38,13 @@ class DashboardController extends Controller
 
             $unreadTicketIds = $myTickets->filter(function ($ticket) use ($views) {
                 $latestReply = $ticket->replies->first();
-                if (!$latestReply || $latestReply->author_role !== 'ops') {
+                if (! $latestReply || $latestReply->author_role !== 'ops') {
                     return false;
                 }
 
                 $lastViewed = $views->get($ticket->id)?->last_viewed_at;
 
-                return !$lastViewed || $latestReply->created_at->gt($lastViewed);
+                return ! $lastViewed || $latestReply->created_at->gt($lastViewed);
             })->pluck('id')->all();
         }
 
@@ -69,9 +69,9 @@ class DashboardController extends Controller
         // Pass data to the dashboard view
         return view('dashboard', [
             'myTicketsCount' => $myTicketsCount,
-            'myOpenCount'    => $myOpenCount,
-            'opsSummary'     => $opsSummary,
-            'myTickets'      => $myTickets,
+            'myOpenCount' => $myOpenCount,
+            'opsSummary' => $opsSummary,
+            'myTickets' => $myTickets,
             'unreadTicketIds' => $unreadTicketIds,
         ]);
     }

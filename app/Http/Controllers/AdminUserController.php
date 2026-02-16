@@ -33,7 +33,7 @@ class AdminUserController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $user = new User();
+        $user = new User;
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->role = $data['role'];

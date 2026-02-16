@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tickets', function (Blueprint $table) {
-        	$table->id();
-	
-		$table->string('requester_email');
-		$table->string('subject');
-		$table->text('description');
-		
-		$table->string('category')->default('General');
-		$table->string('priority')->default('Normal');
-		$table->string('status')->default('Open');
+            $table->id();
 
-		$table->timestamps();	
+            $table->string('requester_email');
+            $table->string('subject');
+            $table->text('description');
+
+            $table->string('category')->default('General');
+            $table->string('priority')->default('Normal');
+            $table->string('status')->default('Open');
+
+            $table->timestamps();
         });
     }
 

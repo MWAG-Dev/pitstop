@@ -9,9 +9,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
-use Illuminate\Support\Str;
 
 class RegisteredUserController extends Controller
 {
@@ -38,12 +38,12 @@ class RegisteredUserController extends Controller
                 'lowercase',
                 'email',
                 'max:255',
-                'unique:' . User::class,
+                'unique:'.User::class,
                 function ($attribute, $value, $fail) {
                     $domain = Str::lower(Str::after($value, '@'));
                     $allowed = array_map('strtolower', config('signup.allowed_domains', []));
 
-                    if (!in_array($domain, $allowed, true)) {
+                    if (! in_array($domain, $allowed, true)) {
                         $fail('Please use an approved company email address.');
                     }
                 },

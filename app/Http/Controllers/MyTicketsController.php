@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TicketReplied;
 use App\Models\Ticket;
 use App\Models\TicketView;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\TicketReplied;
 
 class MyTicketsController extends Controller
 {
     public function index()
     {
         $user = auth()->user();
-        abort_if(!$user, 403);
+        abort_if(! $user, 403);
 
         $email = $user->email;
 
@@ -31,13 +31,13 @@ class MyTicketsController extends Controller
 
             $unreadTicketIds = $tickets->getCollection()->filter(function ($ticket) use ($views) {
                 $latestReply = $ticket->replies->last();
-                if (!$latestReply || $latestReply->author_role !== 'ops') {
+                if (! $latestReply || $latestReply->author_role !== 'ops') {
                     return false;
                 }
 
                 $lastViewed = $views->get($ticket->id)?->last_viewed_at;
 
-                return !$lastViewed || $latestReply->created_at->gt($lastViewed);
+                return ! $lastViewed || $latestReply->created_at->gt($lastViewed);
             })->pluck('id')->all();
         }
 
@@ -47,7 +47,7 @@ class MyTicketsController extends Controller
     public function show(Ticket $ticket)
     {
         $user = auth()->user();
-        abort_if(!$user, 403);
+        abort_if(! $user, 403);
 
         // Ops can view any ticket
         if (method_exists($user, 'isOps') && $user->isOps()) {
@@ -56,6 +56,7 @@ class MyTicketsController extends Controller
                 ['user_id' => $user->id, 'ticket_id' => $ticket->id],
                 ['last_viewed_at' => now()]
             );
+
             return view('ops.tickets.show', compact('ticket'));
         }
 
@@ -67,16 +68,17 @@ class MyTicketsController extends Controller
             ['user_id' => $user->id, 'ticket_id' => $ticket->id],
             ['last_viewed_at' => now()]
         );
+
         return view('my_tickets.show', compact('ticket'));
     }
 
     public function storeReply(Request $request, Ticket $ticket)
     {
         $user = auth()->user();
-        abort_if(!$user, 403);
+        abort_if(! $user, 403);
 
         // Non-ops can only reply to their own tickets
-        if (!(method_exists($user, 'isOps') && $user->isOps())) {
+        if (! (method_exists($user, 'isOps') && $user->isOps())) {
             abort_if($ticket->requester_email !== $user->email, 403);
         }
 
@@ -86,9 +88,9 @@ class MyTicketsController extends Controller
 
         // Create a reply from the requester/user
         $reply = $ticket->replies()->create([
-            'author_role'  => 'requester',
+            'author_role' => 'requester',
             'author_email' => $user->email,
-            'message'      => $validated['message'],
+            'message' => $validated['message'],
         ]);
 
         $opsEmail = env('OPS_NOTIFY_EMAIL');
