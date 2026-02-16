@@ -1,0 +1,8 @@
+{
+    "ignoreFiles": ["public/**", "vendor/**"],
+    "rules": {
+        "block-no-empty": true,
+        "no-empty-source": true,
+        "declaration-block-no-duplicate-properties": true
+    }
+}

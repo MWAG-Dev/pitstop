@@ -1,0 +1,81 @@
+{
+    "folders": [
+        {
+            "path": ".",
+        },
+    ],
+    "settings": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": "explicit",
+        },
+        "files.associations": {
+            "*.blade.php": "blade",
+        },
+        "emmet.includeLanguages": {
+            "blade": "html",
+        },
+        "tailwindCSS.includeLanguages": {
+            "blade": "html",
+        },
+        "tailwindCSS.experimental.classRegex": ["class=\\\"([^\\\"]*)\\\"", "@class\\(([^)]*)\\)"],
+        "[php]": {
+            "editor.defaultFormatter": "open-southeners.laravel-pint",
+        },
+        "[blade]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+        },
+        "[javascript]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+        },
+        "[css]": {
+            "editor.defaultFormatter": "esbenp.prettier-vscode",
+        },
+        "search.exclude": {
+            "**/vendor": true,
+            "**/node_modules": true,
+            "**/public/build": true,
+            "**/storage/framework": true,
+        },
+        "intelephense.environment.phpVersion": "8.2.0",
+    },
+    "extensions": {
+        "recommendations": [
+            "bmewburn.vscode-intelephense-client",
+            "open-southeners.laravel-pint",
+            "onecentlin.laravel-blade",
+            "amiralizadeh9480.laravel-extra-intellisense",
+            "bradlc.vscode-tailwindcss",
+            "esbenp.prettier-vscode",
+            "dbaeumer.vscode-eslint",
+            "xdebug.php-debug",
+        ],
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "composer: dev",
+                "type": "shell",
+                "command": "composer dev",
+                "group": "build",
+            },
+            {
+                "label": "composer: test",
+                "type": "shell",
+                "command": "composer test",
+                "group": "test",
+            },
+            {
+                "label": "quality: lint",
+                "type": "shell",
+                "command": "composer lint && npm run lint",
+            },
+            {
+                "label": "quality: format check",
+                "type": "shell",
+                "command": "composer format:check && npm run format:check",
+            },
+        ],
+    },
+}

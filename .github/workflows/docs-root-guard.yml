@@ -1,0 +1,36 @@
+name: Docs Root Guard
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  enforce-doc-layout:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enforce root documentation policy
+        run: |
+          set -e
+          ALLOWED='README.md LICENSE'
+          FOUND=$(find . -maxdepth 1 -type f \( -name '*.md' -o -name '*.txt' -o -name '*.rst' -o -name '*.adoc' \) -printf '%f\n' | sort)
+          echo "Root documentation files:"
+          echo "$FOUND"
+
+          BAD=""
+          for file in $FOUND; do
+            case " $ALLOWED " in
+              *" $file "*) ;;
+              *) BAD="$BAD $file" ;;
+            esac
+          done
+
+          if [ -n "$BAD" ]; then
+            echo "Found non-essential root documentation files:$BAD"
+            echo "Move documentation files under ./docs/* according to docs/governance/documentation-policy.md"
+            exit 1
+          fi

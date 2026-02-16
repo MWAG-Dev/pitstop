@@ -1,98 +1,99 @@
-/ * resources/css/ops.css * /
+/* resources/css/ops.css */
 
 /* Ops Queue specific styles layered on top of app.css */
 
 .ops-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
 }
 
 .ops-title {
-  margin: 0;
-  font-size: 1.45rem;
-  letter-spacing: -0.02em;
+    margin: 0;
+    font-size: 1.45rem;
+    letter-spacing: -0.02em;
 }
 
 .ops-sub {
-  margin-top: 6px;
-  color: rgba(255,255,255,0.70);
-  font-size: 0.92rem;
+    margin-top: 6px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.92rem;
 }
 
 /* Table */
 .ops-table-wrap {
-  margin-top: 16px;
-  overflow-x: auto;
+    margin-top: 16px;
+    overflow-x: auto;
 }
 
 .ops-table {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .ops-table th {
-  text-align: left;
-  padding: 12px 10px;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.60);
-  border-bottom: 1px solid rgba(255,255,255,0.14);
+    text-align: left;
+    padding: 12px 10px;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .ops-table td {
-  padding: 12px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  vertical-align: top;
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    vertical-align: top;
 }
 
 /* Prevent wrapping in Status + Priority columns */
 .ops-table td:nth-child(2),
 .ops-table td:nth-child(3) {
-  white-space: nowrap;
+    white-space: nowrap;
 }
 
 .ops-table tr:hover {
-  background: rgba(255,255,255,0.04);
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .ops-link {
-  color: rgba(255,255,255,0.92);
-  font-weight: 650;
-  text-decoration: none;
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 650;
+    text-decoration: none;
 }
 
 .ops-muted {
-  color: rgba(255,255,255,0.62);
-  font-size: 0.86rem;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.86rem;
 }
 
 .ops-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.08);
-  font-size: 0.75rem;
-  text-transform: capitalize;
-  color: rgba(255,255,255,0.86);
-  white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 0.75rem;
+    text-transform: capitalize;
+    color: rgba(255, 255, 255, 0.86);
+    white-space: nowrap;
 }
 
 @media (max-width: 900px) {
-  .ops-table th, .ops-table td {
-    white-space: nowrap;
-  }
+    .ops-table th,
+    .ops-table td {
+        white-space: nowrap;
+    }
 }
 
 .brand-logo {
-  height: 32px;
-  width: auto;
-  display: block;
-  max-width: 140px;
-  object-fit: contain;
+    height: 32px;
+    width: auto;
+    display: block;
+    max-width: 140px;
+    object-fit: contain;
 }

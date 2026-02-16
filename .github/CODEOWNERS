@@ -1,0 +1,8 @@
+# CODEOWNERS
+
+* @mwm-dev
+/app/ @mwm-dev
+/resources/ @mwm-dev
+/routes/ @mwm-dev
+/docs/ @mwm-dev
+/.github/ @mwm-dev
