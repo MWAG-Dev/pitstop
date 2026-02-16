@@ -9,35 +9,15 @@
         "editor.codeActionsOnSave": {
             "source.fixAll.eslint": "explicit",
         },
-        "files.associations": {
-            "*.blade.php": "blade",
-        },
-        "emmet.includeLanguages": {
-            "blade": "html",
-        },
-        "tailwindCSS.includeLanguages": {
-            "blade": "html",
-        },
-        "tailwindCSS.experimental.classRegex": ["class=\\\"([^\\\"]*)\\\"", "@class\\(([^)]*)\\)"],
         "[php]": {
             "editor.defaultFormatter": "open-southeners.laravel-pint",
         },
         "[blade]": {
             "editor.defaultFormatter": "esbenp.prettier-vscode",
         },
-        "[javascript]": {
-            "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "chat.mcp.discovery.enabled": {
+            "claude-desktop": true
         },
-        "[css]": {
-            "editor.defaultFormatter": "esbenp.prettier-vscode",
-        },
-        "search.exclude": {
-            "**/vendor": true,
-            "**/node_modules": true,
-            "**/public/build": true,
-            "**/storage/framework": true,
-        },
-        "intelephense.environment.phpVersion": "8.2.0",
     },
     "extensions": {
         "recommendations": [

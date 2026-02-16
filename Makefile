@@ -9,6 +9,9 @@ VITE_PORT ?= 5173
 VITE_HOST ?= 0.0.0.0
 PID_DIR ?= .pids
 VITE_PID_FILE ?= $(PID_DIR)/vite.pid
+CONTAINER_WEB ?= pitstop-web
+CONTAINER_QUEUE ?= pitstop-queue
+CONTAINER_LOGS ?= pitstop-logs
 DOCKER_RUN ?= docker run --rm -v "$$(pwd)":/app -w /app composer:2
 DOCKER_COMPOSER ?= $(DOCKER_RUN) sh -lc
 
@@ -124,9 +127,9 @@ clean: ## Remove build artifacts and caches
 	rm -rf public/build
 	$(PHP) artisan optimize:clear || true
 
-stack-up: env ## Launch Laravel (Docker) + Vite in background processes
+stack-up: env ## Launch full stack in background (web, queue, logs, vite)
+	@$(MAKE) stack-down >/dev/null
 	@mkdir -p $(PID_DIR) storage/logs
-	@docker rm -f pitstop-web >/dev/null 2>&1 || true
 	@if ss -ltn | grep -q ":$(STACK_APP_PORT) "; then \
 		echo "Port $(STACK_APP_PORT) is already in use. Override with: make stack-up STACK_APP_PORT=<port>"; \
 		exit 1; \
@@ -135,30 +138,35 @@ stack-up: env ## Launch Laravel (Docker) + Vite in background processes
 		echo "Port $(VITE_PORT) is already in use. Override with: make stack-up VITE_PORT=<port>"; \
 		exit 1; \
 	fi
-	@docker run -d --name pitstop-web -v "$$(pwd)":/app -w /app -p $(STACK_APP_PORT):$(STACK_APP_PORT) composer:2 sh -lc 'git config --global --add safe.directory /app >/dev/null 2>&1; php artisan serve --host=0.0.0.0 --port=$(STACK_APP_PORT)' >/dev/null
-	@if [ -f "$(VITE_PID_FILE)" ] && kill -0 $$(cat "$(VITE_PID_FILE)") >/dev/null 2>&1; then \
-		echo "Vite already running (PID $$(cat $(VITE_PID_FILE)))."; \
-	else \
-		nohup $(NPM) run dev -- --host $(VITE_HOST) --port $(VITE_PORT) --strictPort > storage/logs/vite-dev.log 2>&1 & echo $$! > "$(VITE_PID_FILE)"; \
-		echo "Started Vite (PID $$(cat $(VITE_PID_FILE)))."; \
-	fi
+	@docker run -d --name $(CONTAINER_WEB) -v "$$(pwd)":/app -w /app -p $(STACK_APP_PORT):$(STACK_APP_PORT) composer:2 sh -lc 'git config --global --add safe.directory /app >/dev/null 2>&1; php artisan serve --host=0.0.0.0 --port=$(STACK_APP_PORT)' >/dev/null
+	@docker run -d --name $(CONTAINER_QUEUE) -v "$$(pwd)":/app -w /app composer:2 sh -lc 'git config --global --add safe.directory /app >/dev/null 2>&1; php artisan queue:listen --tries=1' >/dev/null
+	@docker run -d --name $(CONTAINER_LOGS) -v "$$(pwd)":/app -w /app composer:2 sh -lc 'touch storage/logs/laravel.log && tail -n 0 -f storage/logs/laravel.log' >/dev/null
+	@nohup $(NPM) run dev -- --host $(VITE_HOST) --port $(VITE_PORT) --strictPort > storage/logs/vite-dev.log 2>&1 & echo $$! > "$(VITE_PID_FILE)"
+	@echo "Started Vite (PID $$(cat $(VITE_PID_FILE)))."
 	@HOST_IP=$$(hostname -I | awk '{print $$1}'); \
 		echo "Laravel local:  http://127.0.0.1:$(STACK_APP_PORT)"; \
 		echo "Laravel remote: http://$$HOST_IP:$(STACK_APP_PORT)"; \
 		echo "Vite local:     http://127.0.0.1:$(VITE_PORT)"; \
 		echo "Vite remote:    http://$$HOST_IP:$(VITE_PORT) (@vite/client)"
 
-stack-down: ## Stop background Laravel (Docker) + Vite processes
-	@docker rm -f pitstop-web >/dev/null 2>&1 || true
+stack-down: ## Stop all project Laravel/Node background services (containers + host processes)
+	@docker rm -f $(CONTAINER_WEB) $(CONTAINER_QUEUE) $(CONTAINER_LOGS) >/dev/null 2>&1 || true
+	@for cid in $$(docker ps -q --filter volume="$$(pwd)"); do docker rm -f $$cid >/dev/null 2>&1 || true; done
 	@if [ -f "$(VITE_PID_FILE)" ]; then \
 		if kill -0 $$(cat "$(VITE_PID_FILE)") >/dev/null 2>&1; then kill $$(cat "$(VITE_PID_FILE)") >/dev/null 2>&1 || true; fi; \
 		rm -f "$(VITE_PID_FILE)"; \
 	fi
+	@pkill -f "$$(pwd).*npm run dev" >/dev/null 2>&1 || true
+	@pkill -f "$$(pwd).*vite" >/dev/null 2>&1 || true
+	@pkill -f "$$(pwd).*artisan serve" >/dev/null 2>&1 || true
+	@pkill -f "$$(pwd).*artisan queue:listen" >/dev/null 2>&1 || true
+	@pkill -f "$$(pwd).*artisan pail" >/dev/null 2>&1 || true
+	@rm -rf $(PID_DIR)
 	@echo "Background stack stopped."
 
-stack-status: ## Show status of background Laravel + Vite processes
-	@echo "=== Laravel container ==="
-	@docker ps --filter name=pitstop-web --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
+stack-status: ## Show status of background web, queue, logs, and Vite processes
+	@echo "=== Laravel containers ==="
+	@docker ps --filter name=$(CONTAINER_WEB) --filter name=$(CONTAINER_QUEUE) --filter name=$(CONTAINER_LOGS) --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
 	@echo "=== Vite process ==="
 	@if [ -f "$(VITE_PID_FILE)" ] && kill -0 $$(cat "$(VITE_PID_FILE)") >/dev/null 2>&1; then \
 		echo "vite: running (PID $$(cat $(VITE_PID_FILE)))"; \
@@ -166,8 +174,12 @@ stack-status: ## Show status of background Laravel + Vite processes
 		echo "vite: not running"; \
 	fi
 
-stack-logs: ## Tail logs for background Laravel container and Vite dev server
-	@echo "--- pitstop-web logs (last 50) ---"
-	@docker logs --tail 50 pitstop-web 2>/dev/null || echo "pitstop-web not running"
+stack-logs: ## Tail logs for background web/queue/log containers and Vite dev server
+	@echo "--- $(CONTAINER_WEB) logs (last 50) ---"
+	@docker logs --tail 50 $(CONTAINER_WEB) 2>/dev/null || echo "$(CONTAINER_WEB) not running"
+	@echo "--- $(CONTAINER_QUEUE) logs (last 50) ---"
+	@docker logs --tail 50 $(CONTAINER_QUEUE) 2>/dev/null || echo "$(CONTAINER_QUEUE) not running"
+	@echo "--- $(CONTAINER_LOGS) logs (last 50) ---"
+	@docker logs --tail 50 $(CONTAINER_LOGS) 2>/dev/null || echo "$(CONTAINER_LOGS) not running"
 	@echo "--- Vite logs (last 50) ---"
 	@tail -n 50 storage/logs/vite-dev.log 2>/dev/null || echo "vite log not found"

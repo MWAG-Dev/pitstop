@@ -28,8 +28,8 @@
 
 ## Background stack controls
 
-- `make stack-status` — check app + Vite background process health
-- `make stack-logs` — inspect Laravel container logs and Vite logs
-- `make stack-down` — stop background app + Vite processes
+- `make stack-status` — check web/queue/logs/Vite background process health
+- `make stack-logs` — inspect Laravel web/queue/logs container logs and Vite logs
+- `make stack-down` — stop all project Laravel/Node background processes
 - `make stack-up STACK_APP_PORT=8088` — launch on a different app port when 8001 is in use
 - `make stack-up VITE_PORT=5175` — launch Vite on a different port when 5173 is in use
