@@ -6,6 +6,8 @@ PitStop is an internal operations ticketing system built with Laravel 12.
 
 - Install + bootstrap: `composer setup`
 - Run full dev stack: `composer dev`
+- Dockerized bootstrap (no local PHP/Composer): `make setup-docker`
+- Launch app + Vite in background: `make stack-up`
 - Run tests: `composer test`
 
 ## Documentation
@@ -17,6 +19,7 @@ All project documentation (except this landing file) lives under `docs/`.
 - Onboarding: [`docs/getting-started/onboarding.md`](docs/getting-started/onboarding.md)
 - Architecture: [`docs/architecture/overview.md`](docs/architecture/overview.md)
 - Development workflow: [`docs/workflows/development.md`](docs/workflows/development.md)
+- Makefile commands: [`docs/workflows/makefile-commands.md`](docs/workflows/makefile-commands.md)
 - Operations/env: [`docs/operations/env-and-config.md`](docs/operations/env-and-config.md)
 - Contribution rules: [`docs/governance/contributing.md`](docs/governance/contributing.md)
 - Documentation policy: [`docs/governance/documentation-policy.md`](docs/governance/documentation-policy.md)

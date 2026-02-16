@@ -31,7 +31,9 @@
 ## Developer workflow
 
 - Bootstrap: `composer setup`
+- Dockerized bootstrap fallback: `make setup-docker`
 - Full dev stack: `composer dev`
+- Background stack management: `make stack-up`, `make stack-status`, `make stack-down`
 - Tests: `composer test`
 - PHP lint/format checks: `composer lint`, `composer format:check`
 - Frontend lint/format checks: `npm run lint`, `npm run format:check`
@@ -40,4 +42,5 @@
 
 - `OPS_NOTIFY_EMAIL` drives ops mail notifications.
 - `ALLOWED_SIGNUP_DOMAINS` controls signup domain allowlist via `config/signup.php`.
+- CORS behavior is configured in `config/cors.php` via `CORS_*` env vars.
 - When introducing new env vars, update `.env.example` and relevant config/docs together.

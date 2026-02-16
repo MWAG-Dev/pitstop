@@ -18,10 +18,11 @@ This repository keeps docs centralized under `docs/`.
 2. [`getting-started/onboarding.md`](getting-started/onboarding.md)
 3. [`architecture/overview.md`](architecture/overview.md)
 4. [`workflows/development.md`](workflows/development.md)
-5. [`governance/contributing.md`](governance/contributing.md)
-6. [`operations/env-and-config.md`](operations/env-and-config.md)
-7. [`governance/documentation-policy.md`](governance/documentation-policy.md)
-8. [`security/security-policy.md`](security/security-policy.md)
+5. [`workflows/makefile-commands.md`](workflows/makefile-commands.md)
+6. [`governance/contributing.md`](governance/contributing.md)
+7. [`operations/env-and-config.md`](operations/env-and-config.md)
+8. [`governance/documentation-policy.md`](governance/documentation-policy.md)
+9. [`security/security-policy.md`](security/security-policy.md)
 
 ## Repository rule
 
