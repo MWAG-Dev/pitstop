@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
+	public const CATEGORY_PRIORITY_MAP = [
+		'General' => 'Normal',
+		'Phone System' => 'High',
+		'Website' => 'High',
+		'Onboarding' => 'Normal',
+		'Off-boarding' => 'Normal',
+		'Internet' => 'Critical',
+		'Other' => 'Low',
+	];
+
     protected $fillable = [
         'requester_email',
 	'subject',
