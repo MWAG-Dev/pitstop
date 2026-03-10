@@ -104,27 +104,16 @@
                 @csrf
 
                 <div class="card-inner">
-                    <div class="grid grid-2">
+                    <div class="grid">
                         <div>
                             <label for="category">Category</label>
                             <select id="category" name="category" required>
                                 @php $cat = old('category', 'General'); @endphp
-                                @foreach(['General','Phone System','Website','CRM','Hardware','Access/Permissions','Network','Other'] as $c)
+                                @foreach(['General','Phone System','Website','Onboarding','Off-boarding','Internet','Other'] as $c)
                                     <option value="{{ $c }}" @selected($cat === $c)>{{ $c }}</option>
                                 @endforeach
                             </select>
-                            <div class="hint">Pick the closest match. It helps route the request.</div>
-                        </div>
-
-                        <div>
-                            <label for="priority">Priority</label>
-                            <select id="priority" name="priority" required>
-                                @php $pri = old('priority', 'Normal'); @endphp
-                                @foreach(['Low','Normal','High','Critical'] as $p)
-                                    <option value="{{ $p }}" @selected($pri === $p)>{{ $p }}</option>
-                                @endforeach
-                            </select>
-                            <div class="hint">Use <span class="kbd">Critical</span> only if work is blocked for multiple people.</div>
+                            <div class="hint">Pick the closest match. Priority is set automatically based on category.</div>
                         </div>
                     </div>
 

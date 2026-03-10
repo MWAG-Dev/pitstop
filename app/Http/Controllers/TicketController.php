@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 use App\Mail\NewTicketSubmitted;
 use App\Mail\TicketReplied;
 use App\Models\TicketView;
@@ -24,17 +26,18 @@ class TicketController extends Controller
         $validated = $request->validate([
             'subject'     => ['required', 'string', 'max:150'],
             'description'     => ['required', 'string', 'max:5000'],
-            'category'        => ['required', 'string', 'max:50'],
-            'priority'        => ['required', 'string', 'max:20'],
+            'category'        => ['required', 'string', 'max:50', Rule::in(array_keys(Ticket::CATEGORY_PRIORITY_MAP))],
             'attachments'   => ['nullable', 'array', 'max:10'],
             'attachments.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,gif,webp,pdf,doc,docx,xls,xlsx,csv,txt'],
         ]);
 
+        $priority = Ticket::CATEGORY_PRIORITY_MAP[$validated['category']] ?? 'Normal';
         $ticketData = Arr::except($validated, ['attachments']);
 
         $ticket = Ticket::create([
             ...$ticketData,
-            'requester_email' => auth()->user()->email,
+            'priority' => $priority,
+            'requester_email' => Auth::user()->email,
             'status' => 'Open',
         ]);
 
@@ -110,7 +113,7 @@ class TicketController extends Controller
 
        $reply = $ticket->replies()->create([
             'author_role'  => 'ops',
-            'author_email' => auth()->user()?->email,
+          'author_email' => Auth::user()?->email,
             'message'      => $validated['message'],
         ]);
 
@@ -164,14 +167,17 @@ class TicketController extends Controller
             $ticketsQuery->whereNotIn('status', ['Closed', 'Resolved']);
         }
 
+        $priorityOrder = "case priority when 'Critical' then 4 when 'High' then 3 when 'Normal' then 2 when 'Low' then 1 else 0 end";
+
         $tickets = $ticketsQuery
             ->with(['replies' => fn ($query) => $query->latest('created_at')->limit(1)])
+            ->orderByRaw("{$priorityOrder} desc")
             ->orderByDesc('created_at')
             ->paginate(20)
             ->appends(request()->query());
 
         $unreadTicketIds = [];
-        $user = auth()->user();
+        $user = Auth::user();
         if ($user && $tickets->count() > 0) {
             $views = TicketView::where('user_id', $user->id)
                 ->whereIn('ticket_id', $tickets->pluck('id'))
@@ -196,7 +202,7 @@ class TicketController extends Controller
     public function opsShow(Ticket $ticket)
     {
         $ticket->load('replies');
-        $user = auth()->user();
+        $user = Auth::user();
         if ($user) {
             TicketView::updateOrCreate(
                 ['user_id' => $user->id, 'ticket_id' => $ticket->id],
@@ -221,7 +227,8 @@ class TicketController extends Controller
 
     public function opsDestroy(Ticket $ticket)
     {
-        $user = auth()->user();
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
         abort_if(!$user || !$user->isAdmin(), 403);
 
         $ticketId = $ticket->id;

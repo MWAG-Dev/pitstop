@@ -72,7 +72,7 @@
         <div class="ops-header">
             <div>
                 <h1 class="ops-title">Ops Request Queue</h1>
-                <div class="ops-sub">All submitted requests (newest first).</div>
+                <div class="ops-sub">All submitted requests (priority first).</div>
             </div>
         </div>
 
@@ -104,9 +104,9 @@
                     <label style="display:flex; flex-direction:column; gap:6px;">
                         <span class="ops-muted" style="font-size: 0.78rem;">Sort</span>
                         <select id="opsSort" style="padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.14);background:rgba(7, 11, 20, 0.30);color:rgba(255,255,255,0.92);outline:none;">
+                            <option value="priority" selected>Priority</option>
                             <option value="newest">Newest</option>
                             <option value="oldest">Oldest</option>
-                            <option value="priority">Priority</option>
                             <option value="status">Status</option>
                         </select>
                     </label>
@@ -251,7 +251,7 @@
             function reset() {
                 if (statusEl) statusEl.value = '';
                 if (priorityEl) priorityEl.value = '';
-                if (sortEl) sortEl.value = 'newest';
+                if (sortEl) sortEl.value = 'priority';
                 const params = new URLSearchParams(window.location.search);
                 params.delete('status');
                 window.location.search = params.toString();
