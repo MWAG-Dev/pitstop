@@ -11,9 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/inbound-email',
+        ]);
+
         $middleware->alias([
             'ops' => \App\Http\Middleware\EnsureOps::class,
             'admin' => \App\Http\Middleware\EnsureAdmin::class,
+            'password.change' => \App\Http\Middleware\EnsurePasswordChange::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -73,6 +73,12 @@
             <div class="pill">Signed in as {{ auth()->user()->email }}</div>
         </div>
 
+        @if(auth()->user()->must_change_password)
+            <div class="alert alert-danger" style="margin-bottom: 14px;">
+                Please change your temporary password before using the rest of PitStop.
+            </div>
+        @endif
+
         <div class="settings-stack">
             <section class="card" aria-label="Profile information">
                 <div class="card-inner">

@@ -20,4 +20,10 @@ class Ticket extends Model
         return $this->hasMany(\App\Models\TicketReply::class)
             ->orderBy('created_at');
     }
+
+    public function attachments()
+    {
+        return $this->hasMany(\App\Models\TicketAttachment::class)
+            ->orderBy('created_at');
+    }
 }
